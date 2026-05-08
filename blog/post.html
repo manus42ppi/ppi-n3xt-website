@@ -230,100 +230,88 @@
 <script src="../js/api.js"></script>
 <script>
   /* ── Analytics ──────────────────────────────────────────── */
-  const TRACK_URL = 'https://develop.socialflow-pro.pages.dev/track';
-  const _slug     = new URLSearchParams(window.location.search).get('slug');
-  const _pageStart = Date.now();
-  let _durationSent = false;
+  // Strategie: view sofort via fetch, alle anderen Events gebündelt
+  // als ein einziger sendBeacon-Batch beim Page-Unload.
+  // → Ein KV-Write statt N parallele Writes (kein Race Condition).
+  // → text/plain vermeidet CORS-Preflight bei sendBeacon.
 
-  // WICHTIG: text/plain vermeidet CORS-Preflight bei sendBeacon.
-  // Cloudflare Workers parst JSON-Body unabhängig vom Content-Type.
-  function _post(payload) {
-    const body = JSON.stringify(payload);
+  const TRACK_URL  = 'https://develop.socialflow-pro.pages.dev/track';
+  const _slug      = new URLSearchParams(window.location.search).get('slug');
+  const _t0        = Date.now();
+
+  // Batch-Zustand — wird am Unload als ein Beacon gesendet
+  const _b = { scrollDepths: new Set(), linkClicks: 0, referrer: null, isReturn: false };
+  let _flushed = false;
+
+  function _flush() {
+    if (!_slug || _flushed) return;
+    _flushed = true;
+
+    const seconds = Math.round((Date.now() - _t0) / 1000);
+    const events = [];
+    if (seconds > 5) events.push({ event: 'duration', duration: seconds });
+    for (const d of _b.scrollDepths) events.push({ event: 'scroll', depth: d });
+    if (_b.linkClicks > 0) events.push({ event: 'link', clicks: _b.linkClicks });
+    if (_b.referrer)  events.push({ event: 'referrer', source: _b.referrer });
+    if (_b.isReturn)  events.push({ event: 'return' });
+    if (!events.length) return;
+
+    const body = JSON.stringify({ slug: _slug, batch: events });
     if (navigator.sendBeacon) {
       navigator.sendBeacon(TRACK_URL, new Blob([body], { type: 'text/plain' }));
     } else {
-      fetch(TRACK_URL, {
-        method: 'POST', keepalive: true,
-        headers: { 'Content-Type': 'application/json' }, body,
-      }).catch(() => {});
+      fetch(TRACK_URL, { method:'POST', keepalive:true,
+        headers:{'Content-Type':'application/json'}, body }).catch(()=>{});
     }
   }
 
-  // View + Referrer + Rückkehr-Erkennung (via localStorage)
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') _flush(); });
+  window.addEventListener('pagehide', _flush);
+
+  // View sofort beim Laden (fetch, kein Beacon nötig)
   function trackView() {
     if (!_slug) return;
-
-    // View via fetch (kein sendBeacon nötig, Page ist noch aktiv)
     fetch(TRACK_URL, {
-      method: 'POST', keepalive: true,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slug: _slug, event: 'view' }),
-    }).catch(() => {});
+      method:'POST', keepalive:true, headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ slug: _slug, batch: [{ event: 'view' }] }),
+    }).catch(()=>{});
 
-    // Referrer kategorisieren
+    // Referrer kategorisieren → in Batch
     const ref = document.referrer || '';
-    let source = 'direct';
-    if (ref) {
-      if (/google\.|bing\.|duckduckgo\.|yahoo\.|ecosia\./.test(ref))          source = 'organic';
-      else if (/linkedin\.|instagram\.|twitter\.|x\.com|facebook\.|tiktok\.|youtube\./.test(ref)) source = 'social';
-      else if (/newsletter|email|mailchimp|substack|campaign/.test(ref))       source = 'newsletter';
-      else source = 'other';
-    }
-    _post({ slug: _slug, event: 'referrer', source });
+    if (/google\.|bing\.|duckduckgo\.|yahoo\.|ecosia\./.test(ref))           _b.referrer = 'organic';
+    else if (/linkedin\.|instagram\.|twitter\.|x\.com|facebook\.|tiktok\./.test(ref)) _b.referrer = 'social';
+    else if (/newsletter|email|mailchimp|substack|campaign/.test(ref))        _b.referrer = 'newsletter';
+    else if (ref)  _b.referrer = 'other';
+    else           _b.referrer = 'direct';
 
-    // Rückkehr-Erkennung (localStorage, kein Cookie nötig)
-    const visitKey = 'ppin_v_' + _slug;
-    if (localStorage.getItem(visitKey)) {
-      _post({ slug: _slug, event: 'return' });
-    }
-    try { localStorage.setItem(visitKey, '1'); } catch {}
+    // Rückkehr-Erkennung via localStorage (kein Cookie nötig) → in Batch
+    const key = 'ppin_v_' + _slug;
+    if (localStorage.getItem(key)) _b.isReturn = true;
+    try { localStorage.setItem(key, '1'); } catch {}
   }
 
-  // Verweildauer — Bug-Fix: seconds<5 prüfen VOR _durationSent setzen
-  function trackDuration() {
-    if (!_slug || _durationSent) return;
-    const seconds = Math.round((Date.now() - _pageStart) / 1000);
-    if (seconds < 5) return;      // erst prüfen …
-    _durationSent = true;         // … dann als gesendet markieren
-    _post({ slug: _slug, event: 'duration', duration: seconds });
-  }
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') trackDuration();
-  });
-  window.addEventListener('pagehide', trackDuration);
-
-  /* ── Scroll-Tiefe ────────────────────────────────────────── */
-  const _scrollSent = new Set();
+  /* ── Scroll-Tiefe → Batch ──────────────────────────────── */
   let _scrollTimer;
   window.addEventListener('scroll', () => {
     clearTimeout(_scrollTimer);
     _scrollTimer = setTimeout(() => {
-      if (!_slug) return;
       const el = document.documentElement;
       if (el.scrollHeight <= el.clientHeight) return;
       const pct = Math.round(((el.scrollTop + el.clientHeight) / el.scrollHeight) * 100);
       for (const m of [25, 50, 75, 100]) {
-        if (pct >= m && !_scrollSent.has(m)) {
-          _scrollSent.add(m);
-          _post({ slug: _slug, event: 'scroll', depth: m });
-        }
+        if (pct >= m) _b.scrollDepths.add(m);
       }
     }, 200);
   }, { passive: true });
 
-  /* ── Klick-Rate auf externe Links ────────────────────────── */
+  /* ── Link-Klicks → Batch ───────────────────────────────── */
   function initLinkTracking() {
     const postBody = document.getElementById('post-body');
     if (!postBody || !_slug) return;
     postBody.addEventListener('click', e => {
       const a = e.target.closest('a[href]');
       if (!a) return;
-      try {
-        if (new URL(a.href).hostname !== location.hostname) {
-          _post({ slug: _slug, event: 'link' });
-        }
-      } catch {}
+      try { if (new URL(a.href).hostname !== location.hostname) _b.linkClicks++; } catch {}
     });
   }
 
