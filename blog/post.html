@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artikel – ppi n3xt Blog</title>
+  <meta name="description" content="Artikel aus dem ppi n3xt Blog." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="../assets/logo.svg" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════════════════ -->
+<header class="site-header">
+  <div class="container">
+    <nav class="nav" id="main-nav">
+      <a href="../index.html" class="nav__logo">
+        <img src="../assets/logo.svg" alt="ppi n3xt Logo" height="32" />
+        <span class="nav__logo-text">ppi <span>n3xt</span></span>
+      </a>
+
+      <ul class="nav__links">
+        <li><a href="../index.html#ueber-uns" class="nav__link">Über uns</a></li>
+        <li><a href="../index.html#leistungen" class="nav__link">Leistungen</a></li>
+        <li><a href="index.html" class="nav__link active">Blog</a></li>
+        <li><a href="../index.html#kontakt" class="nav__link">Kontakt</a></li>
+      </ul>
+
+      <div class="nav__actions">
+        <a href="../index.html#kontakt" class="nav__cta">Gespräch anfragen</a>
+      </div>
+
+      <button class="nav__toggle" id="nav-toggle" aria-label="Menü öffnen">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════
+     ARTICLE
+════════════════════════════════════════════════════════════ -->
+<main>
+
+  <!-- Loading state -->
+  <div id="post-loading">
+    <div class="page-hero">
+      <div class="container">
+        <div class="skeleton skeleton-line skeleton-line--sm"
+             style="height:12px;width:80px;margin-bottom:16px;"></div>
+        <div class="skeleton skeleton-title"
+             style="height:44px;width:70%;margin-bottom:16px;"></div>
+        <div class="skeleton skeleton-line skeleton-line--md"
+             style="height:14px;margin-bottom:8px;"></div>
+      </div>
+    </div>
+    <section class="section">
+      <div class="container" style="max-width:760px;">
+        <div class="skeleton skeleton-line skeleton-line--lg" style="height:16px;margin-bottom:12px;"></div>
+        <div class="skeleton skeleton-line skeleton-line--xl" style="height:16px;margin-bottom:12px;"></div>
+        <div class="skeleton skeleton-line skeleton-line--md" style="height:16px;margin-bottom:12px;"></div>
+        <div class="skeleton skeleton-line skeleton-line--lg" style="height:16px;margin-bottom:32px;"></div>
+        <div class="skeleton" style="height:24px;width:55%;margin-bottom:20px;"></div>
+        <div class="skeleton skeleton-line skeleton-line--xl" style="height:16px;margin-bottom:12px;"></div>
+        <div class="skeleton skeleton-line skeleton-line--lg" style="height:16px;margin-bottom:12px;"></div>
+        <div class="skeleton skeleton-line skeleton-line--md" style="height:16px;margin-bottom:12px;"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Error state -->
+  <div id="post-error" style="display:none;">
+    <section class="section">
+      <div class="container" style="text-align:center;padding:96px 0;">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+             style="margin:0 auto 20px;color:var(--neutral-300);">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 8v4M12 16h.01"/>
+        </svg>
+        <h1 class="h2" style="font-size:28px;" id="error-title">Artikel nicht gefunden</h1>
+        <p class="lead" style="margin-top:12px;max-width:400px;margin-left:auto;margin-right:auto;"
+           id="error-desc">
+          Der gewünschte Artikel konnte nicht geladen werden.
+        </p>
+        <a href="index.html" class="btn btn-primary" style="margin-top:32px;">
+          ← Zurück zum Blog
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <!-- Post content (filled by JS) -->
+  <div id="post-content" style="display:none;">
+
+    <!-- Post page-hero -->
+    <div class="page-hero" id="post-hero">
+      <div class="container">
+        <a href="index.html" class="back-link" style="color:rgba(255,255,255,0.5);margin-bottom:24px;display:inline-flex;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"/>
+          </svg>
+          Alle Beiträge
+        </a>
+
+        <p class="eyebrow" id="post-category"></p>
+
+        <h1 class="post-title" id="post-title" style="color:var(--white);margin-top:12px;"></h1>
+
+        <div class="post-meta" style="margin-top:20px;">
+          <div class="post-meta__author">
+            <div class="post-meta__avatar" id="post-avatar"></div>
+            <span id="post-author"></span>
+          </div>
+          <span style="color:rgba(255,255,255,0.3);">·</span>
+          <span id="post-date"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Post body -->
+    <section class="section" style="padding-top:64px;">
+      <div class="container">
+        <div class="post-layout">
+          <!-- Main content -->
+          <article>
+            <div class="post-content" id="post-body"></div>
+
+            <!-- Tags -->
+            <div class="post-tags" id="post-tags-list"></div>
+
+            <!-- Author box -->
+            <div id="post-author-box"
+                 style="margin-top:48px;padding:28px;background:var(--brand-bg);
+                        border-radius:var(--radius);border:1px solid rgba(105,65,198,0.15);
+                        display:flex;gap:20px;align-items:flex-start;">
+              <div class="post-meta__avatar" id="post-avatar-2"
+                   style="width:48px;height:48px;font-size:16px;flex-shrink:0;"></div>
+              <div>
+                <div style="font-weight:600;color:var(--neutral-900);" id="post-author-2"></div>
+                <div style="font-size:14px;color:var(--neutral-500);margin-top:4px;">
+                  Autor bei ppi n3xt
+                </div>
+              </div>
+            </div>
+
+            <!-- Back link -->
+            <div style="margin-top:48px;">
+              <a href="index.html" class="back-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Zurück zum Blog
+              </a>
+            </div>
+          </article>
+
+          <!-- Sidebar (TOC) -->
+          <aside class="post-sidebar">
+            <nav class="toc" id="toc-nav" style="display:none;">
+              <div class="toc__title">Auf dieser Seite</div>
+              <ul class="toc__list" id="toc-list"></ul>
+            </nav>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<!-- ══════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <a href="../index.html" class="nav__logo">
+          <img src="../assets/logo.svg" alt="ppi n3xt" height="30" />
+          <span class="nav__logo-text">ppi <span>n3xt</span></span>
+        </a>
+        <p>Digitale Produkte &amp; Innovation.<br/>Wir bauen die Zukunft – gemeinsam mit Ihnen.</p>
+      </div>
+
+      <div>
+        <div class="footer__heading">Unternehmen</div>
+        <ul class="footer__links">
+          <li><a href="../index.html#ueber-uns" class="footer__link">Über uns</a></li>
+          <li><a href="../index.html#leistungen" class="footer__link">Leistungen</a></li>
+          <li><a href="index.html" class="footer__link">Blog</a></li>
+          <li><a href="../index.html#kontakt" class="footer__link">Kontakt</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer__heading">Leistungen</div>
+        <ul class="footer__links">
+          <li><a href="../index.html#leistungen" class="footer__link">KI-Content Marketing</a></li>
+          <li><a href="../index.html#leistungen" class="footer__link">Digitale Produkte</a></li>
+          <li><a href="../index.html#leistungen" class="footer__link">Innovation Lab</a></li>
+          <li><a href="../index.html#leistungen" class="footer__link">Beratung &amp; Strategie</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer__heading">Kontakt</div>
+        <ul class="footer__links">
+          <li><a href="mailto:hello@ppi-n3xt.de" class="footer__link">hello@ppi-n3xt.de</a></li>
+          <li><a href="#" class="footer__link">+49 89 000 000 00</a></li>
+          <li><a href="#" class="footer__link">Maximilianstraße 1</a></li>
+          <li><a href="#" class="footer__link">80539 München</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>&copy; 2026 ppi n3xt GmbH. Alle Rechte vorbehalten.</span>
+      <div class="footer__legal">
+        <a href="#" class="footer__link">Impressum</a>
+        <a href="#" class="footer__link">Datenschutz</a>
+        <a href="#" class="footer__link">AGB</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/api.js"></script>
+<script>
+  /* ── Mobile nav ─────────────────────────────────────────── */
+  document.getElementById('nav-toggle').addEventListener('click', () => {
+    document.getElementById('main-nav').classList.toggle('nav--open');
+  });
+
+  /* ── DOM refs ───────────────────────────────────────────── */
+  const loadingEl     = document.getElementById('post-loading');
+  const errorEl       = document.getElementById('post-error');
+  const contentEl     = document.getElementById('post-content');
+  const errorTitle    = document.getElementById('error-title');
+  const errorDesc     = document.getElementById('error-desc');
+
+  /* ── Get slug from URL ──────────────────────────────────── */
+  const params = new URLSearchParams(window.location.search);
+  const slug   = params.get('slug');
+
+  function showError(title, desc) {
+    loadingEl.style.display = 'none';
+    errorTitle.textContent  = title;
+    errorDesc.textContent   = desc;
+    errorEl.style.display   = 'block';
+  }
+
+  /* ── TOC scroll spy ─────────────────────────────────────── */
+  function initScrollSpy() {
+    const tocLinks = document.querySelectorAll('.toc__link');
+    if (!tocLinks.length) return;
+
+    const headings = [...document.querySelectorAll('.post-content h2')];
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            tocLinks.forEach(l => l.classList.remove('active'));
+            const active = document.querySelector(`.toc__link[href="#${entry.target.id}"]`);
+            if (active) active.classList.add('active');
+          }
+        });
+      },
+      { rootMargin: '-15% 0px -70% 0px' }
+    );
+
+    headings.forEach(h => obs.observe(h));
+  }
+
+  /* ── Load and render post ───────────────────────────────── */
+  (async () => {
+    if (!slug) {
+      showError('Kein Artikel angegeben', 'In der URL fehlt ein gültiger Artikel-Slug.');
+      return;
+    }
+
+    try {
+      const post = await fetchPost(slug);
+
+      if (!post || !post.title) {
+        showError('Artikel nicht gefunden', `Der Artikel „${slug}" existiert nicht oder wurde entfernt.`);
+        return;
+      }
+
+      /* Update page title & meta */
+      document.title = `${post.title} – ppi n3xt Blog`;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', post.excerpt || post.title);
+
+      /* Fill hero */
+      document.getElementById('post-category').textContent = post.category || 'Blog';
+      document.getElementById('post-title').textContent     = post.title;
+      document.getElementById('post-date').textContent      = formatDate(post.publishedAt);
+      document.getElementById('post-author').textContent    = post.author || 'ppi n3xt Team';
+      document.getElementById('post-author-2').textContent  = post.author || 'ppi n3xt Team';
+
+      const initials = getInitials(post.author || 'ppi n3xt');
+      document.getElementById('post-avatar').textContent   = initials;
+      document.getElementById('post-avatar-2').textContent = initials;
+
+      /* Render content */
+      const bodyHtml = renderPost(post);
+      document.getElementById('post-body').innerHTML = bodyHtml;
+
+      /* Tags */
+      const tags = Array.isArray(post.tags) ? post.tags : [];
+      const tagsEl = document.getElementById('post-tags-list');
+      if (tags.length) {
+        tagsEl.innerHTML = tags.map(t => `<span class="tag">${t}</span>`).join('');
+      } else {
+        tagsEl.style.display = 'none';
+      }
+
+      /* Build TOC */
+      const toc = buildToc(bodyHtml);
+      if (toc.length > 1) {
+        const tocNav  = document.getElementById('toc-nav');
+        const tocList = document.getElementById('toc-list');
+        tocList.innerHTML = toc.map(item =>
+          `<li><a href="#${item.id}" class="toc__link">${item.text}</a></li>`
+        ).join('');
+        tocNav.style.display = 'block';
+
+        // Smooth scroll for TOC links
+        tocList.querySelectorAll('.toc__link').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = document.getElementById(link.getAttribute('href').slice(1));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        });
+      }
+
+      /* Show content */
+      loadingEl.style.display  = 'none';
+      contentEl.style.display  = 'block';
+
+      /* Init scroll spy after content rendered */
+      requestAnimationFrame(initScrollSpy);
+
+    } catch (err) {
+      console.error('Post fetch error:', err);
+      showError(
+        'Artikel nicht erreichbar',
+        'Der Artikel konnte nicht geladen werden. Bitte prüfen Sie Ihre Verbindung.'
+      );
+    }
+  })();
+</script>
+</body>
+</html>

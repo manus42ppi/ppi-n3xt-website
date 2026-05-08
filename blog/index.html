@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog – ppi n3xt</title>
+  <meta name="description"
+    content="Einblicke, Trends und Praxiswissen aus dem ppi n3xt Innovation Lab." />
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="icon" type="image/svg+xml" href="../assets/logo.svg" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════════════════ -->
+<header class="site-header" id="site-header">
+  <div class="container">
+    <nav class="nav" id="main-nav">
+      <a href="../index.html" class="nav__logo">
+        <img src="../assets/logo.svg" alt="ppi n3xt Logo" height="32" />
+        <span class="nav__logo-text">ppi <span>n3xt</span></span>
+      </a>
+
+      <ul class="nav__links">
+        <li><a href="../index.html#ueber-uns" class="nav__link">Über uns</a></li>
+        <li><a href="../index.html#leistungen" class="nav__link">Leistungen</a></li>
+        <li><a href="index.html" class="nav__link active">Blog</a></li>
+        <li><a href="../index.html#kontakt" class="nav__link">Kontakt</a></li>
+      </ul>
+
+      <div class="nav__actions">
+        <a href="../index.html#kontakt" class="nav__cta">Gespräch anfragen</a>
+      </div>
+
+      <button class="nav__toggle" id="nav-toggle" aria-label="Menü öffnen">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE HERO
+════════════════════════════════════════════════════════════ -->
+<section class="page-hero">
+  <div class="container">
+    <p class="eyebrow">Blog</p>
+    <h1 class="h1" style="color:var(--white);margin-top:10px;">Gedanken &amp; Einblicke</h1>
+    <p class="lead" style="color:rgba(255,255,255,0.5);max-width:540px;margin-top:16px;">
+      Praxiswissen, Trends und Perspektiven zu KI, Produktentwicklung
+      und digitaler Transformation – direkt aus dem Team.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     BLOG LISTING
+════════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="container">
+
+    <!-- Controls -->
+    <div class="blog-controls" id="blog-controls" style="display:none;">
+      <div class="search-box">
+        <svg class="search-box__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="search-input" placeholder="Beitrag suchen …" autocomplete="off" />
+      </div>
+      <div class="filter-pills" id="filter-pills">
+        <button class="filter-pill active" data-cat="all">Alle</button>
+      </div>
+    </div>
+
+    <!-- Posts count -->
+    <div id="posts-count" class="posts-count" style="display:none;"></div>
+
+    <!-- Loading skeletons -->
+    <div id="blog-loading" class="grid-3">
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-img"></div>
+        <div class="skeleton-body">
+          <div class="skeleton skeleton-line skeleton-line--sm" style="margin-bottom:14px;"></div>
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton skeleton-line skeleton-line--lg"></div>
+          <div class="skeleton skeleton-line skeleton-line--xl"></div>
+          <div class="skeleton skeleton-line skeleton-line--md" style="margin-top:20px;"></div>
+        </div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-img"></div>
+        <div class="skeleton-body">
+          <div class="skeleton skeleton-line skeleton-line--sm" style="margin-bottom:14px;"></div>
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton skeleton-line skeleton-line--lg"></div>
+          <div class="skeleton skeleton-line skeleton-line--xl"></div>
+          <div class="skeleton skeleton-line skeleton-line--md" style="margin-top:20px;"></div>
+        </div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-img"></div>
+        <div class="skeleton-body">
+          <div class="skeleton skeleton-line skeleton-line--sm" style="margin-bottom:14px;"></div>
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton skeleton-line skeleton-line--lg"></div>
+          <div class="skeleton skeleton-line skeleton-line--xl"></div>
+          <div class="skeleton skeleton-line skeleton-line--md" style="margin-top:20px;"></div>
+        </div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-img"></div>
+        <div class="skeleton-body">
+          <div class="skeleton skeleton-line skeleton-line--sm" style="margin-bottom:14px;"></div>
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton skeleton-line skeleton-line--lg"></div>
+          <div class="skeleton skeleton-line skeleton-line--xl"></div>
+        </div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-img"></div>
+        <div class="skeleton-body">
+          <div class="skeleton skeleton-line skeleton-line--sm" style="margin-bottom:14px;"></div>
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton skeleton-line skeleton-line--lg"></div>
+          <div class="skeleton skeleton-line skeleton-line--xl"></div>
+        </div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton skeleton-img"></div>
+        <div class="skeleton-body">
+          <div class="skeleton skeleton-line skeleton-line--sm" style="margin-bottom:14px;"></div>
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton skeleton-line skeleton-line--lg"></div>
+          <div class="skeleton skeleton-line skeleton-line--xl"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Posts grid -->
+    <div id="blog-posts" class="grid-3" style="display:none;"></div>
+
+    <!-- Error state -->
+    <div id="blog-error" style="display:none;" class="state-error">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 8v4M12 16h.01"/>
+      </svg>
+      <h3 style="font-size:18px;font-weight:600;color:var(--neutral-700);margin-bottom:8px;">
+        Blog nicht erreichbar
+      </h3>
+      <p>Wir konnten die Beiträge nicht laden. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut.</p>
+      <button class="btn btn-primary" onclick="window.location.reload()" style="margin-top:24px;">
+        Erneut versuchen
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════════════ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <a href="../index.html" class="nav__logo">
+          <img src="../assets/logo.svg" alt="ppi n3xt" height="30" />
+          <span class="nav__logo-text">ppi <span>n3xt</span></span>
+        </a>
+        <p>Digitale Produkte &amp; Innovation.<br/>
+           Wir bauen die Zukunft – gemeinsam mit Ihnen.</p>
+      </div>
+
+      <div>
+        <div class="footer__heading">Unternehmen</div>
+        <ul class="footer__links">
+          <li><a href="../index.html#ueber-uns" class="footer__link">Über uns</a></li>
+          <li><a href="../index.html#leistungen" class="footer__link">Leistungen</a></li>
+          <li><a href="index.html" class="footer__link">Blog</a></li>
+          <li><a href="../index.html#kontakt" class="footer__link">Kontakt</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer__heading">Leistungen</div>
+        <ul class="footer__links">
+          <li><a href="../index.html#leistungen" class="footer__link">KI-Content Marketing</a></li>
+          <li><a href="../index.html#leistungen" class="footer__link">Digitale Produkte</a></li>
+          <li><a href="../index.html#leistungen" class="footer__link">Innovation Lab</a></li>
+          <li><a href="../index.html#leistungen" class="footer__link">Beratung &amp; Strategie</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer__heading">Kontakt</div>
+        <ul class="footer__links">
+          <li><a href="mailto:hello@ppi-n3xt.de" class="footer__link">hello@ppi-n3xt.de</a></li>
+          <li><a href="#" class="footer__link">+49 89 000 000 00</a></li>
+          <li><a href="#" class="footer__link">Maximilianstraße 1</a></li>
+          <li><a href="#" class="footer__link">80539 München</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>&copy; 2026 ppi n3xt GmbH. Alle Rechte vorbehalten.</span>
+      <div class="footer__legal">
+        <a href="#" class="footer__link">Impressum</a>
+        <a href="#" class="footer__link">Datenschutz</a>
+        <a href="#" class="footer__link">AGB</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/api.js"></script>
+<script>
+  /* ── Mobile nav ─────────────────────────────────────────── */
+  const toggle = document.getElementById('nav-toggle');
+  const nav = document.getElementById('main-nav');
+  toggle.addEventListener('click', () => {
+    nav.classList.toggle('nav--open');
+  });
+
+  /* ── State ──────────────────────────────────────────────── */
+  let allPosts = [];
+  let activeCategory = 'all';
+  let searchQuery = '';
+
+  const loadingEl  = document.getElementById('blog-loading');
+  const postsEl    = document.getElementById('blog-posts');
+  const errorEl    = document.getElementById('blog-error');
+  const controlsEl = document.getElementById('blog-controls');
+  const pillsEl    = document.getElementById('filter-pills');
+  const countEl    = document.getElementById('posts-count');
+  const searchEl   = document.getElementById('search-input');
+
+  /* ── Render filtered posts ──────────────────────────────── */
+  function renderPosts() {
+    let filtered = allPosts;
+
+    if (activeCategory !== 'all') {
+      filtered = filtered.filter(p =>
+        (p.category || '').toLowerCase() === activeCategory.toLowerCase()
+      );
+    }
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      filtered = filtered.filter(p =>
+        (p.title || '').toLowerCase().includes(q) ||
+        (p.excerpt || '').toLowerCase().includes(q) ||
+        (p.author || '').toLowerCase().includes(q) ||
+        (Array.isArray(p.tags) && p.tags.some(t => t.toLowerCase().includes(q)))
+      );
+    }
+
+    postsEl.style.display = filtered.length ? 'grid' : 'block';
+    countEl.textContent = `${filtered.length} Beitrag${filtered.length !== 1 ? 'e' : ''}`;
+
+    if (filtered.length === 0) {
+      postsEl.innerHTML = `
+        <div class="no-results">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.5" style="margin:0 auto 16px;opacity:0.3;">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <p style="font-size:16px;font-weight:500;color:var(--neutral-600);">Keine Beiträge gefunden</p>
+          <p style="font-size:14px;margin-top:6px;">Passen Sie Ihre Suche oder den Filter an.</p>
+        </div>`;
+    } else {
+      postsEl.innerHTML = filtered.map(p => buildBlogCard(p, '../')).join('');
+    }
+  }
+
+  /* ── Build category pills ───────────────────────────────── */
+  function buildPills(posts) {
+    const cats = ['all', ...new Set(
+      posts.map(p => p.category).filter(Boolean)
+    )];
+
+    pillsEl.innerHTML = cats.map(cat => {
+      const label = cat === 'all' ? 'Alle' : cat;
+      const active = cat === 'all' ? ' active' : '';
+      return `<button class="filter-pill${active}" data-cat="${cat}">${label}</button>`;
+    }).join('');
+
+    pillsEl.querySelectorAll('.filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        pillsEl.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeCategory = btn.dataset.cat;
+        renderPosts();
+      });
+    });
+  }
+
+  /* ── Search ─────────────────────────────────────────────── */
+  let searchTimeout;
+  searchEl.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      searchQuery = searchEl.value.trim();
+      renderPosts();
+    }, 250);
+  });
+
+  /* ── Load posts ─────────────────────────────────────────── */
+  (async () => {
+    try {
+      allPosts = await fetchPosts();
+
+      loadingEl.style.display = 'none';
+      controlsEl.style.display = 'flex';
+      countEl.style.display = 'block';
+      postsEl.style.display = 'grid';
+
+      buildPills(allPosts);
+      renderPosts();
+    } catch (err) {
+      loadingEl.style.display = 'none';
+      errorEl.style.display = 'block';
+      console.error('Blog fetch error:', err);
+    }
+  })();
+</script>
+</body>
+</html>
