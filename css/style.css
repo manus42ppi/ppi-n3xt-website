@@ -895,6 +895,31 @@ ul, ol { list-style: none; }
   font-family: 'Fira Code', 'Cascadia Code', monospace;
 }
 
+/* ─── Post Images ─────────────────────────────────────────────────────────── */
+.post-content figure.post-img,
+figure.post-img {
+  margin: 36px 0;
+}
+
+.post-content figure.post-img img,
+figure.post-img img {
+  width: 100%;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: block;
+  max-height: 520px;
+  object-fit: cover;
+}
+
+figure.post-img figcaption {
+  font-size: 13px;
+  color: var(--neutral-400);
+  text-align: center;
+  margin-top: 10px;
+  font-style: italic;
+  line-height: 1.4;
+}
+
 .post-tags {
   display: flex;
   gap: 8px;

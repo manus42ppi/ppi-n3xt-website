@@ -68,6 +68,22 @@ function renderPost(post) {
       continue;
     }
 
+    // Image: ![alt](url)
+    if (/^!\[.*?\]\(.+?\)/.test(trimmed)) {
+      closeList(); closeBlockquote();
+      const m = trimmed.match(/^!\[(.*?)\]\((.+?)\)/);
+      if (m) {
+        const [, alt, url] = m;
+        output.push(
+          `<figure class="post-img">` +
+          `<img src="${url}" alt="${alt || ''}" loading="lazy" />` +
+          (alt ? `<figcaption>${alt}</figcaption>` : '') +
+          `</figure>`
+        );
+      }
+      continue;
+    }
+
     // H2
     if (trimmed.startsWith('## ')) {
       closeList(); closeBlockquote();
