@@ -3,7 +3,7 @@
  * Endpoint: https://socialflow-pro.pages.dev/api/blog
  */
 
-const API_BASE = 'https://socialflow-pro.pages.dev/api/blog';
+const API_BASE = 'https://develop.socialflow-pro.pages.dev/api/blog';
 
 /** Fetch all posts */
 async function fetchPosts() {
