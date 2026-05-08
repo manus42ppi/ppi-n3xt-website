@@ -160,6 +160,13 @@ function buildSkeletonCard() {
     </div>`;
 }
 
+/** Extract the first image URL from markdown content */
+function extractFirstImage(content) {
+  if (!content) return null;
+  const m = content.match(/!\[.*?\]\((.+?)\)/);
+  return m ? m[1] : null;
+}
+
 /** Build a blog card HTML string */
 function buildBlogCard(post, basePath = '') {
   const href = `${basePath}blog/post.html?slug=${encodeURIComponent(post.slug)}`;
@@ -167,16 +174,18 @@ function buildBlogCard(post, basePath = '') {
   const tags = Array.isArray(post.tags) ? post.tags.slice(0, 2) : [];
   const tagsHtml = tags.map(t => `<span class="tag">${t}</span>`).join('');
 
-  const icon = `
-    <svg class="blog-card__img-placeholder" width="48" height="48" viewBox="0 0 24 24" fill="none"
+  const coverImg = extractFirstImage(post.content);
+  const imgInner = coverImg
+    ? `<img src="${coverImg}" alt="${post.title || ''}" class="blog-card__cover" loading="lazy" />`
+    : `<svg class="blog-card__img-placeholder" width="48" height="48" viewBox="0 0 24 24" fill="none"
          stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M4 6h16M4 10h16M4 14h8M4 18h8"/>
-    </svg>`;
+         <path d="M4 6h16M4 10h16M4 14h8M4 18h8"/>
+       </svg>`;
 
   return `
     <a href="${href}" class="blog-card">
       <div class="blog-card__img">
-        ${icon}
+        ${imgInner}
         <span class="blog-card__category">${category}</span>
       </div>
       <div class="blog-card__body">
