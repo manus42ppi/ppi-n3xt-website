@@ -231,13 +231,16 @@
 <script>
   /* ── Analytics ──────────────────────────────────────────── */
   const TRACK_URL = 'https://develop.socialflow-pro.pages.dev/track';
+  const _slug     = new URLSearchParams(window.location.search).get('slug');
   const _pageStart = Date.now();
   let _durationSent = false;
 
+  // WICHTIG: text/plain vermeidet CORS-Preflight bei sendBeacon.
+  // Cloudflare Workers parst JSON-Body unabhängig vom Content-Type.
   function _post(payload) {
     const body = JSON.stringify(payload);
     if (navigator.sendBeacon) {
-      navigator.sendBeacon(TRACK_URL, new Blob([body], { type: 'application/json' }));
+      navigator.sendBeacon(TRACK_URL, new Blob([body], { type: 'text/plain' }));
     } else {
       fetch(TRACK_URL, {
         method: 'POST', keepalive: true,
@@ -246,23 +249,43 @@
     }
   }
 
+  // View + Referrer + Rückkehr-Erkennung (via localStorage)
   function trackView() {
-    const s = new URLSearchParams(window.location.search).get('slug');
-    if (!s) return;
+    if (!_slug) return;
+
+    // View via fetch (kein sendBeacon nötig, Page ist noch aktiv)
     fetch(TRACK_URL, {
       method: 'POST', keepalive: true,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ slug: s, event: 'view' }),
+      body: JSON.stringify({ slug: _slug, event: 'view' }),
     }).catch(() => {});
+
+    // Referrer kategorisieren
+    const ref = document.referrer || '';
+    let source = 'direct';
+    if (ref) {
+      if (/google\.|bing\.|duckduckgo\.|yahoo\.|ecosia\./.test(ref))          source = 'organic';
+      else if (/linkedin\.|instagram\.|twitter\.|x\.com|facebook\.|tiktok\.|youtube\./.test(ref)) source = 'social';
+      else if (/newsletter|email|mailchimp|substack|campaign/.test(ref))       source = 'newsletter';
+      else source = 'other';
+    }
+    _post({ slug: _slug, event: 'referrer', source });
+
+    // Rückkehr-Erkennung (localStorage, kein Cookie nötig)
+    const visitKey = 'ppin_v_' + _slug;
+    if (localStorage.getItem(visitKey)) {
+      _post({ slug: _slug, event: 'return' });
+    }
+    try { localStorage.setItem(visitKey, '1'); } catch {}
   }
 
+  // Verweildauer — Bug-Fix: seconds<5 prüfen VOR _durationSent setzen
   function trackDuration() {
-    const s = new URLSearchParams(window.location.search).get('slug');
-    if (!s || _durationSent) return;
+    if (!_slug || _durationSent) return;
     const seconds = Math.round((Date.now() - _pageStart) / 1000);
-    if (seconds < 5) return;   // guard BEFORE setting the flag
-    _durationSent = true;
-    _post({ slug: s, event: 'duration', duration: seconds });
+    if (seconds < 5) return;      // erst prüfen …
+    _durationSent = true;         // … dann als gesendet markieren
+    _post({ slug: _slug, event: 'duration', duration: seconds });
   }
 
   document.addEventListener('visibilitychange', () => {
@@ -276,19 +299,33 @@
   window.addEventListener('scroll', () => {
     clearTimeout(_scrollTimer);
     _scrollTimer = setTimeout(() => {
+      if (!_slug) return;
       const el = document.documentElement;
       if (el.scrollHeight <= el.clientHeight) return;
       const pct = Math.round(((el.scrollTop + el.clientHeight) / el.scrollHeight) * 100);
-      const s = new URLSearchParams(window.location.search).get('slug');
-      if (!s) return;
       for (const m of [25, 50, 75, 100]) {
         if (pct >= m && !_scrollSent.has(m)) {
           _scrollSent.add(m);
-          _post({ slug: s, event: 'scroll', depth: m });
+          _post({ slug: _slug, event: 'scroll', depth: m });
         }
       }
     }, 200);
   }, { passive: true });
+
+  /* ── Klick-Rate auf externe Links ────────────────────────── */
+  function initLinkTracking() {
+    const postBody = document.getElementById('post-body');
+    if (!postBody || !_slug) return;
+    postBody.addEventListener('click', e => {
+      const a = e.target.closest('a[href]');
+      if (!a) return;
+      try {
+        if (new URL(a.href).hostname !== location.hostname) {
+          _post({ slug: _slug, event: 'link' });
+        }
+      } catch {}
+    });
+  }
 
   /* ── Mobile nav ─────────────────────────────────────────── */
   document.getElementById('nav-toggle').addEventListener('click', () => {
@@ -404,10 +441,11 @@
       loadingEl.style.display  = 'none';
       contentEl.style.display  = 'block';
 
-      /* Init scroll spy after content rendered */
+      /* Init scroll spy + link tracking after content rendered */
       requestAnimationFrame(initScrollSpy);
+      requestAnimationFrame(initLinkTracking);
 
-      /* ── Analytics: fire view event ───────────────────────── */
+      /* ── Analytics: fire view + referrer + return events ─── */
       trackView();
 
     } catch (err) {
