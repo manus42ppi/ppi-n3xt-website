@@ -229,6 +229,44 @@
 
 <script src="../js/api.js"></script>
 <script>
+  /* ── Analytics ──────────────────────────────────────────── */
+  const TRACK_URL = 'https://develop.socialflow-pro.pages.dev/track';
+  const _pageStart = Date.now();
+  let _durationSent = false;
+
+  function trackView() {
+    const s = new URLSearchParams(window.location.search).get('slug');
+    if (!s) return;
+    fetch(TRACK_URL, {
+      method: 'POST', keepalive: true,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ slug: s, event: 'view' }),
+    }).catch(() => {});
+  }
+
+  function trackDuration() {
+    const s = new URLSearchParams(window.location.search).get('slug');
+    if (!s || _durationSent) return;
+    _durationSent = true;
+    const seconds = Math.round((Date.now() - _pageStart) / 1000);
+    if (seconds < 5) return;
+    const payload = JSON.stringify({ slug: s, event: 'duration', duration: seconds });
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(TRACK_URL, new Blob([payload], { type: 'application/json' }));
+    } else {
+      fetch(TRACK_URL, {
+        method: 'POST', keepalive: true,
+        headers: { 'Content-Type': 'application/json' },
+        body: payload,
+      }).catch(() => {});
+    }
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') trackDuration();
+  });
+  window.addEventListener('pagehide', trackDuration);
+
   /* ── Mobile nav ─────────────────────────────────────────── */
   document.getElementById('nav-toggle').addEventListener('click', () => {
     document.getElementById('main-nav').classList.toggle('nav--open');
@@ -345,6 +383,9 @@
 
       /* Init scroll spy after content rendered */
       requestAnimationFrame(initScrollSpy);
+
+      /* ── Analytics: fire view event ───────────────────────── */
+      trackView();
 
     } catch (err) {
       console.error('Post fetch error:', err);
