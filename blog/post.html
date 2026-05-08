@@ -234,6 +234,18 @@
   const _pageStart = Date.now();
   let _durationSent = false;
 
+  function _post(payload) {
+    const body = JSON.stringify(payload);
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(TRACK_URL, new Blob([body], { type: 'application/json' }));
+    } else {
+      fetch(TRACK_URL, {
+        method: 'POST', keepalive: true,
+        headers: { 'Content-Type': 'application/json' }, body,
+      }).catch(() => {});
+    }
+  }
+
   function trackView() {
     const s = new URLSearchParams(window.location.search).get('slug');
     if (!s) return;
@@ -247,25 +259,36 @@
   function trackDuration() {
     const s = new URLSearchParams(window.location.search).get('slug');
     if (!s || _durationSent) return;
-    _durationSent = true;
     const seconds = Math.round((Date.now() - _pageStart) / 1000);
-    if (seconds < 5) return;
-    const payload = JSON.stringify({ slug: s, event: 'duration', duration: seconds });
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon(TRACK_URL, new Blob([payload], { type: 'application/json' }));
-    } else {
-      fetch(TRACK_URL, {
-        method: 'POST', keepalive: true,
-        headers: { 'Content-Type': 'application/json' },
-        body: payload,
-      }).catch(() => {});
-    }
+    if (seconds < 5) return;   // guard BEFORE setting the flag
+    _durationSent = true;
+    _post({ slug: s, event: 'duration', duration: seconds });
   }
 
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden') trackDuration();
   });
   window.addEventListener('pagehide', trackDuration);
+
+  /* ── Scroll-Tiefe ────────────────────────────────────────── */
+  const _scrollSent = new Set();
+  let _scrollTimer;
+  window.addEventListener('scroll', () => {
+    clearTimeout(_scrollTimer);
+    _scrollTimer = setTimeout(() => {
+      const el = document.documentElement;
+      if (el.scrollHeight <= el.clientHeight) return;
+      const pct = Math.round(((el.scrollTop + el.clientHeight) / el.scrollHeight) * 100);
+      const s = new URLSearchParams(window.location.search).get('slug');
+      if (!s) return;
+      for (const m of [25, 50, 75, 100]) {
+        if (pct >= m && !_scrollSent.has(m)) {
+          _scrollSent.add(m);
+          _post({ slug: s, event: 'scroll', depth: m });
+        }
+      }
+    }, 200);
+  }, { passive: true });
 
   /* ── Mobile nav ─────────────────────────────────────────── */
   document.getElementById('nav-toggle').addEventListener('click', () => {
